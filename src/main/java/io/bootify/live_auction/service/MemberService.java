@@ -14,11 +14,9 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberMapper memberMapper;
 
-    public MemberService(final MemberRepository memberRepository, final MemberMapper memberMapper) {
+    public MemberService(final MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.memberMapper = memberMapper;
     }
 
     public Page<MemberDTO> findAll(final String filter, final Pageable pageable) {
@@ -36,32 +34,49 @@ public class MemberService {
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(member -> memberMapper.updateMemberDTO(member, new MemberDTO()))
+                .map(member -> mapToDTO(member, new MemberDTO()))
                 .toList(),
                 pageable, page.getTotalElements());
     }
 
     public MemberDTO get(final Integer id) {
         return memberRepository.findById(id)
-                .map(member -> memberMapper.updateMemberDTO(member, new MemberDTO()))
+                .map(member -> mapToDTO(member, new MemberDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Integer create(final MemberDTO memberDTO) {
         final Member member = new Member();
-        memberMapper.updateMember(memberDTO, member);
+        mapToEntity(memberDTO, member);
         return memberRepository.save(member).getId();
     }
 
     public void update(final Integer id, final MemberDTO memberDTO) {
         final Member member = memberRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        memberMapper.updateMember(memberDTO, member);
+        mapToEntity(memberDTO, member);
         memberRepository.save(member);
     }
 
     public void delete(final Integer id) {
         memberRepository.deleteById(id);
+    }
+
+    private MemberDTO mapToDTO(final Member member, final MemberDTO memberDTO) {
+        memberDTO.setId(member.getId());
+        memberDTO.setSignInId(member.getSignInId());
+        memberDTO.setPassword(member.getPassword());
+        memberDTO.setPoint(member.getPoint());
+        memberDTO.setRole(member.getRole());
+        return memberDTO;
+    }
+
+    private Member mapToEntity(final MemberDTO memberDTO, final Member member) {
+        member.setSignInId(memberDTO.getSignInId());
+        member.setPassword(memberDTO.getPassword());
+        member.setPoint(memberDTO.getPoint());
+        member.setRole(memberDTO.getRole());
+        return member;
     }
 
     public boolean signInIdExists(final String signInId) {

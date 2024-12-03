@@ -14,12 +14,9 @@ import org.springframework.stereotype.Service;
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
-    private final AuctionMapper auctionMapper;
 
-    public AuctionService(final AuctionRepository auctionRepository,
-            final AuctionMapper auctionMapper) {
+    public AuctionService(final AuctionRepository auctionRepository) {
         this.auctionRepository = auctionRepository;
-        this.auctionMapper = auctionMapper;
     }
 
     public Page<AuctionDTO> findAll(final String filter, final Pageable pageable) {
@@ -37,32 +34,65 @@ public class AuctionService {
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(auction -> auctionMapper.updateAuctionDTO(auction, new AuctionDTO()))
+                .map(auction -> mapToDTO(auction, new AuctionDTO()))
                 .toList(),
                 pageable, page.getTotalElements());
     }
 
     public AuctionDTO get(final Integer id) {
         return auctionRepository.findById(id)
-                .map(auction -> auctionMapper.updateAuctionDTO(auction, new AuctionDTO()))
+                .map(auction -> mapToDTO(auction, new AuctionDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Integer create(final AuctionDTO auctionDTO) {
         final Auction auction = new Auction();
-        auctionMapper.updateAuction(auctionDTO, auction);
+        mapToEntity(auctionDTO, auction);
         return auctionRepository.save(auction).getId();
     }
 
     public void update(final Integer id, final AuctionDTO auctionDTO) {
         final Auction auction = auctionRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        auctionMapper.updateAuction(auctionDTO, auction);
+        mapToEntity(auctionDTO, auction);
         auctionRepository.save(auction);
     }
 
     public void delete(final Integer id) {
         auctionRepository.deleteById(id);
+    }
+
+    private AuctionDTO mapToDTO(final Auction auction, final AuctionDTO auctionDTO) {
+        auctionDTO.setId(auction.getId());
+        auctionDTO.setSellerId(auction.getSellerId());
+        auctionDTO.setProductName(auction.getProductName());
+        auctionDTO.setPricePolicy(auction.getPricePolicy());
+        auctionDTO.setIsShowStock(auction.getIsShowStock());
+        auctionDTO.setVariationDuration(auction.getVariationDuration());
+        auctionDTO.setCurrentPrice(auction.getCurrentPrice());
+        auctionDTO.setCurrentStock(auction.getCurrentStock());
+        auctionDTO.setStartedAt(auction.getStartedAt());
+        auctionDTO.setFinishedAt(auction.getFinishedAt());
+        auctionDTO.setMaximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount());
+        auctionDTO.setOriginPrice(auction.getOriginPrice());
+        auctionDTO.setOriginStock(auction.getOriginStock());
+        return auctionDTO;
+    }
+
+    private Auction mapToEntity(final AuctionDTO auctionDTO, final Auction auction) {
+        auction.setSellerId(auctionDTO.getSellerId());
+        auction.setProductName(auctionDTO.getProductName());
+        auction.setPricePolicy(auctionDTO.getPricePolicy());
+        auction.setIsShowStock(auctionDTO.getIsShowStock());
+        auction.setVariationDuration(auctionDTO.getVariationDuration());
+        auction.setCurrentPrice(auctionDTO.getCurrentPrice());
+        auction.setCurrentStock(auctionDTO.getCurrentStock());
+        auction.setStartedAt(auctionDTO.getStartedAt());
+        auction.setFinishedAt(auctionDTO.getFinishedAt());
+        auction.setMaximumPurchaseLimitCount(auctionDTO.getMaximumPurchaseLimitCount());
+        auction.setOriginPrice(auctionDTO.getOriginPrice());
+        auction.setOriginStock(auctionDTO.getOriginStock());
+        return auction;
     }
 
     public boolean sellerIdExists(final Integer sellerId) {

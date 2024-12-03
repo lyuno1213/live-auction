@@ -14,12 +14,9 @@ import org.springframework.stereotype.Service;
 public class ReceiptService {
 
     private final ReceiptRepository receiptRepository;
-    private final ReceiptMapper receiptMapper;
 
-    public ReceiptService(final ReceiptRepository receiptRepository,
-            final ReceiptMapper receiptMapper) {
+    public ReceiptService(final ReceiptRepository receiptRepository) {
         this.receiptRepository = receiptRepository;
-        this.receiptMapper = receiptMapper;
     }
 
     public Page<ReceiptDTO> findAll(final String filter, final Pageable pageable) {
@@ -37,32 +34,59 @@ public class ReceiptService {
         }
         return new PageImpl<>(page.getContent()
                 .stream()
-                .map(receipt -> receiptMapper.updateReceiptDTO(receipt, new ReceiptDTO()))
+                .map(receipt -> mapToDTO(receipt, new ReceiptDTO()))
                 .toList(),
                 pageable, page.getTotalElements());
     }
 
     public ReceiptDTO get(final Integer id) {
         return receiptRepository.findById(id)
-                .map(receipt -> receiptMapper.updateReceiptDTO(receipt, new ReceiptDTO()))
+                .map(receipt -> mapToDTO(receipt, new ReceiptDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Integer create(final ReceiptDTO receiptDTO) {
         final Receipt receipt = new Receipt();
-        receiptMapper.updateReceipt(receiptDTO, receipt);
+        mapToEntity(receiptDTO, receipt);
         return receiptRepository.save(receipt).getId();
     }
 
     public void update(final Integer id, final ReceiptDTO receiptDTO) {
         final Receipt receipt = receiptRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        receiptMapper.updateReceipt(receiptDTO, receipt);
+        mapToEntity(receiptDTO, receipt);
         receiptRepository.save(receipt);
     }
 
     public void delete(final Integer id) {
         receiptRepository.deleteById(id);
+    }
+
+    private ReceiptDTO mapToDTO(final Receipt receipt, final ReceiptDTO receiptDTO) {
+        receiptDTO.setId(receipt.getId());
+        receiptDTO.setAuctionId(receipt.getAuctionId());
+        receiptDTO.setBuyerId(receipt.getBuyerId());
+        receiptDTO.setSellerId(receipt.getSellerId());
+        receiptDTO.setProductName(receipt.getProductName());
+        receiptDTO.setPrice(receipt.getPrice());
+        receiptDTO.setQuantity(receipt.getQuantity());
+        receiptDTO.setReceiptStatus(receipt.getReceiptStatus());
+        receiptDTO.setCreatedAt(receipt.getCreatedAt());
+        receiptDTO.setUpdatedAt(receipt.getUpdatedAt());
+        return receiptDTO;
+    }
+
+    private Receipt mapToEntity(final ReceiptDTO receiptDTO, final Receipt receipt) {
+        receipt.setAuctionId(receiptDTO.getAuctionId());
+        receipt.setBuyerId(receiptDTO.getBuyerId());
+        receipt.setSellerId(receiptDTO.getSellerId());
+        receipt.setProductName(receiptDTO.getProductName());
+        receipt.setPrice(receiptDTO.getPrice());
+        receipt.setQuantity(receiptDTO.getQuantity());
+        receipt.setReceiptStatus(receiptDTO.getReceiptStatus());
+        receipt.setCreatedAt(receiptDTO.getCreatedAt());
+        receipt.setUpdatedAt(receiptDTO.getUpdatedAt());
+        return receipt;
     }
 
 }
