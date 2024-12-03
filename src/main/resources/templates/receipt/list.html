@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{receipt.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{receipt.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/receipts/add}" class="btn btn-primary ms-2">[[#{receipt.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${!receipts.empty || filter != null}" class="row">
+                <div th:replace="~{fragments/utils::searchFilter(object='receipt')}" />
+                <div th:replace="~{fragments/utils::sorting(object='receipt', sortOptions=${ {'id,ASC', 'auctionId,ASC', 'buyerId,ASC'} }, columnClass='offset-lg-4')}" />
+            </div>
+            <div th:if="${receipts.empty}">[[#{receipt.list.empty}]]</div>
+            <div th:if="${!receipts.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{receipt.id.label}]]</th>
+                            <th scope="col">[[#{receipt.auctionId.label}]]</th>
+                            <th scope="col">[[#{receipt.buyerId.label}]]</th>
+                            <th scope="col">[[#{receipt.sellerId.label}]]</th>
+                            <th scope="col">[[#{receipt.productName.label}]]</th>
+                            <th scope="col">[[#{receipt.price.label}]]</th>
+                            <th scope="col">[[#{receipt.quantity.label}]]</th>
+                            <th scope="col">[[#{receipt.receiptStatus.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="receipt : ${receipts}">
+                            <td>[[${receipt.id}]]</td>
+                            <td>[[${receipt.auctionId}]]</td>
+                            <td>[[${receipt.buyerId}]]</td>
+                            <td>[[${receipt.sellerId}]]</td>
+                            <td>[[${receipt.productName}]]</td>
+                            <td>[[${receipt.price}]]</td>
+                            <td>[[${receipt.quantity}]]</td>
+                            <td>[[${receipt.receiptStatus}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/receipts/edit/{id}(id=${receipt.id})}" class="btn btn-sm btn-secondary">[[#{receipt.list.edit}]]</a>
+                                    <form th:action="@{/receipts/delete/{id}(id=${receipt.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{receipt.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:replace="~{fragments/utils::pagination()}" />
+        </div>
+    </body>
+</html>

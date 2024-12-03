@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{auction.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{auction.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/auctions/add}" class="btn btn-primary ms-2">[[#{auction.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${!auctions.empty || filter != null}" class="row">
+                <div th:replace="~{fragments/utils::searchFilter(object='auction')}" />
+                <div th:replace="~{fragments/utils::sorting(object='auction', sortOptions=${ {'id,ASC', 'sellerId,ASC', 'productName,ASC'} }, columnClass='offset-lg-4')}" />
+            </div>
+            <div th:if="${auctions.empty}">[[#{auction.list.empty}]]</div>
+            <div th:if="${!auctions.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{auction.id.label}]]</th>
+                            <th scope="col">[[#{auction.sellerId.label}]]</th>
+                            <th scope="col">[[#{auction.productName.label}]]</th>
+                            <th scope="col">[[#{auction.pricePolicy.label}]]</th>
+                            <th scope="col">[[#{auction.isShowStock.label}]]</th>
+                            <th scope="col">[[#{auction.variationDuration.label}]]</th>
+                            <th scope="col">[[#{auction.currentPrice.label}]]</th>
+                            <th scope="col">[[#{auction.currentStock.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="auction : ${auctions}">
+                            <td>[[${auction.id}]]</td>
+                            <td>[[${auction.sellerId}]]</td>
+                            <td>[[${auction.productName}]]</td>
+                            <td>[[${auction.pricePolicy}]]</td>
+                            <td>[[${auction.isShowStock}]]</td>
+                            <td>[[${auction.variationDuration}]]</td>
+                            <td>[[${auction.currentPrice}]]</td>
+                            <td>[[${auction.currentStock}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/auctions/edit/{id}(id=${auction.id})}" class="btn btn-sm btn-secondary">[[#{auction.list.edit}]]</a>
+                                    <form th:action="@{/auctions/delete/{id}(id=${auction.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{auction.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:replace="~{fragments/utils::pagination()}" />
+        </div>
+    </body>
+</html>

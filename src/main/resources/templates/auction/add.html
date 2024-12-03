@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{auction.add.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{auction.add.headline}]]</h1>
+                <div>
+                    <a th:href="@{/auctions}" class="btn btn-secondary">[[#{auction.add.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('auction')}" />
+            <form th:action="${requestUri}" method="post">
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='sellerId', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='productName')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='pricePolicy')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='isShowStock', type='checkbox')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='variationDuration')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='currentPrice', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='currentStock', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='startedAt')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='finishedAt')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='maximumPurchaseLimitCount', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='originPrice', type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auction', field='originStock', type='number')}" />
+                <input type="submit" th:value="#{auction.add.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>
