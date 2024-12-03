@@ -1,14 +1,7 @@
-package io.bootify.live_auction.domain;
+package io.bootify.live_auction.domain.member;
 
 import io.bootify.live_auction.model.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.*;
 
 
 @Entity

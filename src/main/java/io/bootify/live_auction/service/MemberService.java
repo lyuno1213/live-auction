@@ -1,8 +1,8 @@
 package io.bootify.live_auction.service;
 
-import io.bootify.live_auction.domain.Member;
+import io.bootify.live_auction.domain.member.Member;
 import io.bootify.live_auction.model.MemberDTO;
-import io.bootify.live_auction.repos.MemberRepository;
+import io.bootify.live_auction.repos.member.MemberRepository;
 import io.bootify.live_auction.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,9 +22,9 @@ public class MemberService {
     public Page<MemberDTO> findAll(final String filter, final Pageable pageable) {
         Page<Member> page;
         if (filter != null) {
-            Integer integerFilter = null;
+            Long integerFilter = null;
             try {
-                integerFilter = Integer.parseInt(filter);
+                integerFilter = Long.parseLong(filter);
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
@@ -79,12 +79,20 @@ public class MemberService {
         return member;
     }
 
-    public boolean signInIdExists(final String signInId) {
-        return memberRepository.existsBySignInIdIgnoreCase(signInId);
+    public boolean passwordExists(String value) {
+        return true;
     }
 
-    public boolean passwordExists(final String password) {
-        return memberRepository.existsByPasswordIgnoreCase(password);
+    public boolean signInIdExists(String value) {
+        return true;
     }
+
+//    public boolean signInIdExists(final String signInId) {
+//        return memberRepository.existsBySignInIdIgnoreCase(signInId);
+//    }
+//
+//    public boolean passwordExists(final String password) {
+//        return memberRepository.existsByPasswordIgnoreCase(password);
+//    }
 
 }

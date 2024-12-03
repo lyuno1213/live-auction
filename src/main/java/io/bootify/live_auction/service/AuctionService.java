@@ -1,8 +1,8 @@
 package io.bootify.live_auction.service;
 
-import io.bootify.live_auction.domain.Auction;
+import io.bootify.live_auction.domain.auction.Auction;
 import io.bootify.live_auction.model.AuctionDTO;
-import io.bootify.live_auction.repos.AuctionRepository;
+import io.bootify.live_auction.repos.auction.AuctionRepository;
 import io.bootify.live_auction.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,9 +22,9 @@ public class AuctionService {
     public Page<AuctionDTO> findAll(final String filter, final Pageable pageable) {
         Page<Auction> page;
         if (filter != null) {
-            Integer integerFilter = null;
+            Long integerFilter = null;
             try {
-                integerFilter = Integer.parseInt(filter);
+                integerFilter = Long.parseLong(filter);
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
@@ -96,7 +96,7 @@ public class AuctionService {
     }
 
     public boolean sellerIdExists(final Integer sellerId) {
-        return auctionRepository.existsBySellerId(sellerId);
+        return auctionRepository.existsById(sellerId);
     }
 
 }

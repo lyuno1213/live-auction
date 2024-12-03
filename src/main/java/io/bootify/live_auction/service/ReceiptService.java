@@ -1,8 +1,8 @@
 package io.bootify.live_auction.service;
 
-import io.bootify.live_auction.domain.Receipt;
+import io.bootify.live_auction.domain.receipt.Receipt;
 import io.bootify.live_auction.model.ReceiptDTO;
-import io.bootify.live_auction.repos.ReceiptRepository;
+import io.bootify.live_auction.repos.receipt.ReceiptRepository;
 import io.bootify.live_auction.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,9 +22,9 @@ public class ReceiptService {
     public Page<ReceiptDTO> findAll(final String filter, final Pageable pageable) {
         Page<Receipt> page;
         if (filter != null) {
-            Integer integerFilter = null;
+            Long integerFilter = null;
             try {
-                integerFilter = Integer.parseInt(filter);
+                integerFilter = Long.parseLong(filter);
             } catch (final NumberFormatException numberFormatException) {
                 // keep null - no parseable input
             }
